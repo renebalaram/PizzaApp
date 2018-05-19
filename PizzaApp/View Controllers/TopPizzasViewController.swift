@@ -7,23 +7,47 @@
 //
 
 import UIKit
-
 class TopPizzasViewController: UIViewController {
     
     @IBOutlet weak var pizzaTableView: UITableView!
     
+    @IBOutlet weak var sortingType: UISegmentedControl!
     var pizzas: [(Pizza, Int)] = []
     
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-            
-        fetchPizzas(count: Preferences.pizzaCount)        
+        
+        let sorting: Entity.Sorting = Preferences.sortingType
+        switch sorting {
+        case .byPopularity:
+            sortingType.selectedSegmentIndex = 0
+        case .byNameAsc:
+            sortingType.selectedSegmentIndex = 1
+        case .byNameDesc:
+            sortingType.selectedSegmentIndex = 2
+        }
+        fetchPizzas(count: Preferences.pizzaCount)
+        
+    }
+    
+    @IBAction func sortingTipeChanged(_ sender: Any) {
+        switch sortingType.selectedSegmentIndex {
+        case 0:
+            Preferences.setPizzaSorting(as: Entity.Sorting.byPopularity)
+        case 1:
+            Preferences.setPizzaSorting(as: Entity.Sorting.byNameAsc)
+        case 2:
+            Preferences.setPizzaSorting(as: Entity.Sorting.byNameDesc)
+        default:
+            Preferences.setPizzaSorting(as: Entity.Sorting.byPopularity)
+        }
+        fetchPizzas(count: Preferences.pizzaCount)
     }
     
     func fetchPizzas(count: Int){
-        PizzaService.getPizzas(limit: count){ [unowned self] pizzas in
+        PizzaService.getPizzas(limit: count,sorting: Preferences.sortingType){ [unowned self] pizzas in
             self.pizzas = pizzas
             DispatchQueue.main.async {
                 self.pizzaTableView.reloadData()

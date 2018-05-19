@@ -12,6 +12,14 @@ struct Pizza: Decodable {
     
     var toppings: [String]
     var price: Int?
+    var joinedToppings: String {
+        return toppings.joined(separator: ", ")
+    }
+    
+    init(toppings: [String],price: Int?){
+        self.toppings = toppings.sorted()
+        self.price = price
+    }
 }
 
 

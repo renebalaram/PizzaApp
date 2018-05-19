@@ -19,7 +19,7 @@ class PizzaService {
         return UIApplication.appDelegate.persistentContainer
     }()
 
-    class func getPizzas(limit: Int = 20, completion: @escaping PizzaHandler){
+    class func getPizzas(limit: Int = 20,sorting: Entity.Sorting, completion: @escaping PizzaHandler){
         DispatchQueue.global(qos: .userInitiated).async {
             guard let path = Bundle.main.path(
                 forResource: "pizzas",
@@ -40,8 +40,17 @@ class PizzaService {
             
             let counts = pizzas.reduce(into: [Pizza: Int]()){ $0[$1, default: 0] += 1}
             
-            // sort all pizzas by popularity
-            let topPizzas = counts.sorted(by: { $0.value > $1.value })
+            var topPizzas: [(key:Pizza, value:Int)]
+            switch sorting {
+            case .byPopularity:
+                // sort all pizzas by popularity
+                topPizzas = counts.sorted(by: { $0.value > $1.value })
+            case .byNameAsc:
+                topPizzas = counts.sorted(by: { $0.key.joinedToppings > $1.key.joinedToppings })
+            case .byNameDesc:
+                topPizzas = counts.sorted(by: { $0.key.joinedToppings < $1.key.joinedToppings })
+            }
+            
             
             // if the limit is greater than the count, we will crash
             let end = min(limit, topPizzas.count)

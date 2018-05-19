@@ -18,6 +18,7 @@ class Preferences {
         static let pizzaCount = "pizzaCount"
         static let favorite = "Favorite"
         static let theme = "theme"
+        static let sorting = "sorting"
     }
 
     // read pizza count from User Defaults
@@ -32,4 +33,31 @@ class Preferences {
         UserDefaults.standard.set(count, forKey: Keys.pizzaCount)
     }
     
+    static var sortingType: Entity.Sorting {
+        if let sortingType = UserDefaults.standard.value(forKey: Keys.sorting) as! Entity.Sorting.RawValue? {
+            switch sortingType {
+            case Entity.Sorting.byPopularity.rawValue:
+                return Entity.Sorting.byPopularity
+            case Entity.Sorting.byNameAsc.rawValue:
+                return Entity.Sorting.byNameAsc
+            case Entity.Sorting.byNameDesc.rawValue:
+                return Entity.Sorting.byNameDesc
+            default:
+                return Entity.Sorting.byPopularity
+            }
+        }
+        return Entity.Sorting.byPopularity
+    }
+    
+    class func setPizzaSorting(as sortingType: Entity.Sorting) {
+        UserDefaults.standard.set(sortingType.rawValue, forKey: Keys.sorting)
+    }
+    
 }
+
+
+
+
+
+
+

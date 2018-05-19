@@ -24,4 +24,9 @@ struct Entity {
         case pizza = "PizzaOrder"
         case topping = "Topping"
     }
+    enum Sorting: String {
+        case byNameAsc = "SorByNameAscending"
+        case byNameDesc = "SortByNameDescending"
+        case byPopularity = "SortByPopularity"
+    }
 }
